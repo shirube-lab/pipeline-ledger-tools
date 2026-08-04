@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Extracted open-data layers (regenerate with data/handa/setup_data.py)
+data/handa/suidou/
+data/handa/gesui_osui/
+data/handa/gesui_usui/
+
+# Intermediate artifacts (regenerate with work3-deterioration/prepare_data.py)
+work3-deterioration/cleaned/
