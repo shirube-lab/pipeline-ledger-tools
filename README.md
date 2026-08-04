@@ -9,6 +9,9 @@ Python(geopandas)で自動化する 3 作品をまとめたリポジトリです
 | [work2-ledger-checker](work2-ledger-checker/) | 台帳 × 現地調査の突合チェック・Excel 調書自動生成(全合成データ) |
 | [work3-deterioration](work3-deterioration/) | 下水道管渠の劣化リスク評価・点検優先度スクリーニング(手法デモ) |
 
+解説記事(Qiita):
+[下水道管路のオープンデータで劣化リスク評価・点検優先度マップを作ってみた(Python/geopandas)](https://qiita.com/shirube-lab/items/303367cfc87f2772871a)
+
 ## データについての宣言
 
 - 使用データは **半田市オープンデータ「水道管路等データ」(CC-BY 4.0)** のみです。
