@@ -46,7 +46,7 @@ DISCLAIMER = (
     "半田市の実際の管路状態の評価・更新計画を示すものではありません。"
     "優先度ランクは相対評価(リスクスコア上位5%をAと定義)による点検順序の試算で、"
     "危険度の絶対評価ではありません(現時点で標準耐用年数50年を超えた管渠はほぼありません)。"
-    "「ML予測」列は合成点検ラベルによる参考値です。"
+    "「ML予測」列は合成の緊急度ラベルによる参考値です。"
 )
 
 # 減価償却上の標準耐用年数(地方公営企業法施行規則)。物理的寿命ではない
@@ -105,7 +105,13 @@ def assign_rank(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def ml_demo(df: pd.DataFrame) -> tuple[pd.DataFrame, float]:
-    """Synthetic-inspection ML pipeline (labels are SIMULATED)."""
+    """Synthetic-inspection ML pipeline (labels are SIMULATED).
+
+    Labels emulate the guideline's urgency assessment: 1 = urgency grade
+    II or higher (requires action), 0 = grade III / no deterioration.
+    Real urgency grades come from TV-camera inspection findings; none are
+    public, so a hidden degradation process generates fictional ones.
+    """
     # Hidden "true" degradation process differs slightly from the rule model
     hidden = sigmoid(
         5.0 * (df["service_ratio"] - 0.95)
@@ -129,7 +135,7 @@ def ml_demo(df: pd.DataFrame) -> tuple[pd.DataFrame, float]:
     auc = roc_auc_score(y_te, model.predict_proba(x_te)[:, 1])
 
     df["ml_inspected"] = inspected
-    df["ml_pred_risk"] = model.predict_proba(feats)[:, 1].round(4)
+    df["ml_pred_urgent"] = model.predict_proba(feats)[:, 1].round(4)
     return df, auc
 
 
@@ -183,9 +189,9 @@ def priority_map(gdf: gpd.GeoDataFrame) -> None:
             },
             tooltip=folium.GeoJsonTooltip(
                 fields=["priority_rank", "sewer_type", "sekou_year", "kanshu",
-                        "kankei_mm", "risk_score", "ml_pred_risk"],
+                        "kankei_mm", "risk_score", "ml_pred_urgent"],
                 aliases=["優先度", "区分", "施工年度", "管種", "管径(mm)",
-                         "リスクスコア", "ML予測(合成ラベル・参考)"],
+                         "リスクスコア", "ML予測: 緊急度Ⅱ以上の確率(合成・参考)"],
             ),
         ).add_to(m)
     folium.LayerControl(collapsed=False).add_to(m)
@@ -223,7 +229,7 @@ def main() -> None:
         平均経過年数=("age_filled", lambda s: round(s.mean(), 1)),
     )
     print(summary.to_string())
-    print(f"\nML デモ(合成点検ラベル)AUC: {auc:.3f}")
+    print(f"\nML デモ(合成緊急度ラベル)AUC: {auc:.3f}")
     print(f"耐用年数50年超の管渠: "
           f"{(df['age_filled'] > 50).sum()} 本 / "
           f"{df.loc[df['age_filled'] > 50, 'length_m'].sum() / 1000:.1f} km")
@@ -231,14 +237,14 @@ def main() -> None:
     keep = ["SAUID", "sewer_type", "sekou_year", "age_filled", "age_imputed",
             "kanshu", "mat_family", "kankei_mm", "dokaburi_up_m", "length_m",
             "service_ratio", "p_deterioration", "consequence", "risk_score",
-            "priority_rank", "ml_inspected", "ml_pred_risk", "geometry"]
+            "priority_rank", "ml_inspected", "ml_pred_urgent", "geometry"]
     result = gpd.GeoDataFrame(df[keep], crs=gdf.crs)
     result.to_file(OUT / "priority_result.gpkg", layer="priority", driver="GPKG")
     top = result.sort_values("risk_score", ascending=False).head(300)
     with (OUT / "priority_top300.csv").open("w", encoding="utf-8-sig", newline="") as f:
         f.write(f"# {ATTRIBUTION}\n")
-        f.write("# 本ファイルは手法デモの試算値。ml_pred_risk は合成点検ラベルによる"
-                "参考値であり実測に基づく評価ではない\n")
+        f.write("# 本ファイルは手法デモの試算値。ml_pred_urgent は合成の緊急度ラベル"
+                "(緊急度Ⅱ以上相当か否か)による参考値であり実測に基づく評価ではない\n")
         top.drop(columns="geometry").to_csv(f, index=False)
 
     age_profile_chart(df)

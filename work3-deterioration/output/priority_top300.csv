@@ -1,6 +1,6 @@
 ﻿# 出典: 半田市「水道管路等データ」(CC-BY 4.0)を加工して作成
-# 本ファイルは手法デモの試算値。ml_pred_risk は合成点検ラベルによる参考値であり実測に基づく評価ではない
-SAUID,sewer_type,sekou_year,age_filled,age_imputed,kanshu,mat_family,kankei_mm,dokaburi_up_m,length_m,service_ratio,p_deterioration,consequence,risk_score,priority_rank,ml_inspected,ml_pred_risk
+# 本ファイルは手法デモの試算値。ml_pred_urgent は合成の緊急度ラベル(緊急度Ⅱ以上相当か否か)による参考値であり実測に基づく評価ではない
+SAUID,sewer_type,sekou_year,age_filled,age_imputed,kanshu,mat_family,kankei_mm,dokaburi_up_m,length_m,service_ratio,p_deterioration,consequence,risk_score,priority_rank,ml_inspected,ml_pred_urgent
 12174,雨水,1985.0,41.0,False,,その他,1650.0,2.586,70.63,0.9111111111111111,0.3697397770822487,1.0,0.3697,A,True,0.0141
 12176,雨水,1985.0,41.0,False,,その他,1650.0,2.323,38.97,0.9111111111111111,0.3697397770822487,1.0,0.3697,A,False,0.0475
 12175,雨水,1985.0,41.0,False,,その他,1650.0,2.418,31.19,0.9111111111111111,0.3697397770822487,1.0,0.3697,A,False,0.0911
