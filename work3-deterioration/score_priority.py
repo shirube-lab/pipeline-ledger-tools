@@ -44,7 +44,7 @@ ATTRIBUTION = "出典: 半田市「水道管路等データ」(CC-BY 4.0)を加�
 DISCLAIMER = (
     "【手法デモ】本マップは半田市オープンデータ(CC-BY 4.0)を加工した手法デモであり、"
     "半田市の実際の管路状態の評価・更新計画を示すものではありません。"
-    "優先度ランクは相対評価(リスクスコア上位5%をAと定義)による点検順序の試算で、"
+    "優先度ランクは相対評価(リスクスコア上位2%をAと定義)による点検順序の試算で、"
     "危険度の絶対評価ではありません(現時点で標準耐用年数50年を超えた管渠はほぼありません)。"
     "「ML予測」列は合成の緊急度ラベルによる参考値です。"
 )
@@ -96,10 +96,10 @@ def rule_based_risk(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def assign_rank(df: pd.DataFrame) -> pd.DataFrame:
-    # A: top 5% risk, B: next 15%, C: next 30%, D: rest
+    # A: top 2% risk, B: next 18%, C: next 30%, D: rest
     q = df["risk_score"].rank(pct=True)
     df["priority_rank"] = np.select(
-        [q >= 0.95, q >= 0.80, q >= 0.50], ["A", "B", "C"], default="D"
+        [q >= 0.98, q >= 0.80, q >= 0.50], ["A", "B", "C"], default="D"
     )
     return df
 
