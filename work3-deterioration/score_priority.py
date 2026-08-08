@@ -201,6 +201,19 @@ def priority_map(gdf: gpd.GeoDataFrame) -> None:
                      "ML予測: 緊急度Ⅱ以上の確率(合成・参考)"]) if f in slim.columns],
             ),
         ).add_to(m)
+    if "double_risk" in slim.columns:
+        dr = slim[slim["double_risk"] == True]  # noqa: E712
+        if len(dr):
+            folium.GeoJson(
+                dr.to_json(),
+                name=f"ダブルリスク: 優先度A×軟弱地盤 ({len(dr)}本)",
+                style_function=lambda f: {"color": "#6a0dad", "weight": 6,
+                                          "opacity": 1.0},
+                tooltip=folium.GeoJsonTooltip(
+                    fields=["sekou_year", "kanshu", "kankei_mm", "terrain_name"],
+                    aliases=["施工年度", "管種", "管径(mm)", "微地形区分(J-SHIS)"],
+                ),
+            ).add_to(m)
     folium.LayerControl(collapsed=False).add_to(m)
     m.save(str(OUT / "priority_map.html"))
 
@@ -231,6 +244,16 @@ def main() -> None:
     df = assign_rank(df)
     df, auc = ml_demo(df)
 
+    # Double-risk flag: rank-A screening AND soft-ground terrain. This is
+    # an AND of two independent screens (no reweighting of the score).
+    # Soft-ground classes follow the customary lowland / artificial-ground
+    # grouping of the J-SHIS geomorphological classification.
+    SOFT_TERRAIN = {"干拓地", "埋立地", "三角州・海岸低地", "谷底低地",
+                    "旧河道", "後背湿地", "砂州・砂丘間低地"}
+    if "terrain_name" in df.columns:
+        df["soft_ground"] = df["terrain_name"].isin(SOFT_TERRAIN)
+        df["double_risk"] = (df["priority_rank"] == "A") & df["soft_ground"]
+
     OUT.mkdir(exist_ok=True)
     print("=== 優先度ランク別サマリ ===")
     summary = df.groupby("priority_rank").agg(
@@ -248,7 +271,8 @@ def main() -> None:
             "kanshu", "mat_family", "kankei_mm", "dokaburi_up_m", "length_m",
             "service_ratio", "p_deterioration", "consequence", "risk_score",
             "priority_rank", "ml_inspected", "ml_pred_urgent",
-            "terrain_name", "coast_dist_m", "avs30", "geometry"]
+            "terrain_name", "coast_dist_m", "avs30",
+            "soft_ground", "double_risk", "geometry"]
     keep = [c for c in keep if c in df.columns or c == "geometry"]
     result = gpd.GeoDataFrame(df[keep], crs=gdf.crs)
 
@@ -263,6 +287,10 @@ def main() -> None:
         env_stats.to_csv(OUT / "env_stats.csv", encoding="utf-8-sig")
         print("\n=== 微地形区分別サマリ ===")
         print(env_stats.to_string())
+        dr = df[df["double_risk"]]
+        print(f"\nダブルリスク(優先度A×軟弱地盤系): {len(dr)} 本 / "
+              f"{dr['length_m'].sum() / 1000:.1f} km "
+              f"(A全体の {dr['length_m'].sum() / df.loc[df['priority_rank'] == 'A', 'length_m'].sum():.0%})")
     result.to_file(OUT / "priority_result.gpkg", layer="priority", driver="GPKG")
     top = result.sort_values("risk_score", ascending=False).head(300)
     with (OUT / "priority_top300.csv").open("w", encoding="utf-8-sig", newline="") as f:
