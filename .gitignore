@@ -8,5 +8,10 @@ data/handa/suidou/
 data/handa/gesui_osui/
 data/handa/gesui_usui/
 
+# Environmental raw data (regenerate with data/env/setup_env_data.py)
+data/env/*.zip
+data/env/jshis/
+data/env/n03/
+
 # Intermediate artifacts (regenerate with work3-deterioration/prepare_data.py)
 work3-deterioration/cleaned/

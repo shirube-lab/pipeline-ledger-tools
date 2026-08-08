@@ -188,10 +188,17 @@ def priority_map(gdf: gpd.GeoDataFrame) -> None:
                 "opacity": 0.9 if r in "AB" else 0.5,
             },
             tooltip=folium.GeoJsonTooltip(
-                fields=["priority_rank", "sewer_type", "sekou_year", "kanshu",
-                        "kankei_mm", "risk_score", "ml_pred_urgent"],
-                aliases=["優先度", "区分", "施工年度", "管種", "管径(mm)",
-                         "リスクスコア", "ML予測: 緊急度Ⅱ以上の確率(合成・参考)"],
+                fields=[f for f in
+                        ["priority_rank", "sewer_type", "sekou_year", "kanshu",
+                         "kankei_mm", "terrain_name", "risk_score",
+                         "ml_pred_urgent"] if f in slim.columns],
+                aliases=[a for f, a in zip(
+                    ["priority_rank", "sewer_type", "sekou_year", "kanshu",
+                     "kankei_mm", "terrain_name", "risk_score",
+                     "ml_pred_urgent"],
+                    ["優先度", "区分", "施工年度", "管種", "管径(mm)",
+                     "微地形区分(J-SHIS)", "リスクスコア",
+                     "ML予測: 緊急度Ⅱ以上の確率(合成・参考)"]) if f in slim.columns],
             ),
         ).add_to(m)
     folium.LayerControl(collapsed=False).add_to(m)
@@ -199,7 +206,10 @@ def priority_map(gdf: gpd.GeoDataFrame) -> None:
 
 
 def main() -> None:
-    gdf = gpd.read_file(HERE / "cleaned" / "kankyo_cleaned.gpkg")
+    enriched = HERE / "cleaned" / "kankyo_enriched.gpkg"
+    src = enriched if enriched.exists() else HERE / "cleaned" / "kankyo_cleaned.gpkg"
+    gdf = gpd.read_file(src)
+    print(f"input: {src.name}")
     df = gdf.copy()
 
     # Sanitize implausible cover-depth values found in the ledger
@@ -237,8 +247,22 @@ def main() -> None:
     keep = ["SAUID", "sewer_type", "sekou_year", "age_filled", "age_imputed",
             "kanshu", "mat_family", "kankei_mm", "dokaburi_up_m", "length_m",
             "service_ratio", "p_deterioration", "consequence", "risk_score",
-            "priority_rank", "ml_inspected", "ml_pred_urgent", "geometry"]
+            "priority_rank", "ml_inspected", "ml_pred_urgent",
+            "terrain_name", "coast_dist_m", "avs30", "geometry"]
+    keep = [c for c in keep if c in df.columns or c == "geometry"]
     result = gpd.GeoDataFrame(df[keep], crs=gdf.crs)
+
+    if "terrain_name" in df.columns:
+        env_stats = df.groupby("terrain_name", dropna=False).agg(
+            本数=("terrain_name", "size"),
+            延長km=("length_m", lambda s: round(s.sum() / 1000, 1)),
+            平均経過年数=("age_filled", lambda s: round(s.mean(), 1)),
+            A延長km=("length_m", lambda s: round(
+                s[df.loc[s.index, "priority_rank"] == "A"].sum() / 1000, 2)),
+        ).sort_values("延長km", ascending=False)
+        env_stats.to_csv(OUT / "env_stats.csv", encoding="utf-8-sig")
+        print("\n=== 微地形区分別サマリ ===")
+        print(env_stats.to_string())
     result.to_file(OUT / "priority_result.gpkg", layer="priority", driver="GPKG")
     top = result.sort_values("risk_score", ascending=False).head(300)
     with (OUT / "priority_top300.csv").open("w", encoding="utf-8-sig", newline="") as f:

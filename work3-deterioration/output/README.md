@@ -19,3 +19,4 @@
 | future_wave.png | 経年管渠の将来推移(無対策仮定の試算) |
 | age_profile.png | 管齢構成(管種別・延長ベース) |
 | crs_check_map.html | 座標系検証マップ |
+| env_stats.csv | 微地形区分別の管渠サマリ(J-SHIS 250m メッシュ結合) |
