@@ -10,7 +10,9 @@ Python(geopandas)で自動化するツールとデモをまとめたリポジト
 | [work3-deterioration](work3-deterioration/) | 下水道管渠の劣化リスク評価・点検優先度スクリーニング(手法デモ) |
 
 解説記事(Qiita):
-[下水道管路のオープンデータで劣化リスク評価・点検優先度マップを作ってみた(Python/geopandas)](https://qiita.com/shirube-lab/items/303367cfc87f2772871a)
+
+1. [下水道管路のオープンデータで劣化リスク評価・点検優先度マップを作ってみた(Python/geopandas)](https://qiita.com/shirube-lab/items/303367cfc87f2772871a)
+2. [下水道管路の劣化リスク評価に「地形の目」を足す — J-SHIS 微地形区分と海岸線距離(Python/geopandas)](https://qiita.com/shirube-lab/items/c0e3a133b996a1971200)
 
 ## データについての宣言
 
