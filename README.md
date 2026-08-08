@@ -1,9 +1,9 @@
-# 管路台帳 GIS ポートフォリオ(pipeline-ledger-portfolio)
+# 上下水道 管路台帳のデータ整備・分析ツール集
 
 上下水道の管路台帳 GIS を実務で扱う立場から、台帳データの整備・検査・分析を
-Python(geopandas)で自動化する 3 作品をまとめたリポジトリです。
+Python(geopandas)で自動化するツールとデモをまとめたリポジトリです。
 
-| 作品 | 内容 |
+| ツール | 内容 |
 |---|---|
 | [work1-ledger-cleanup](work1-ledger-cleanup/) | 台帳レイヤの品質検査ツール(SonicWeb 系エクスポートの属性辞書抽出+一括 QA レポート) |
 | [work2-ledger-checker](work2-ledger-checker/) | 台帳 × 現地調査の突合チェック・Excel 調書自動生成(全合成データ) |
