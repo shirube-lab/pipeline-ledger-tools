@@ -25,6 +25,10 @@ Python(geopandas)で自動化する 3 作品をまとめたリポジトリです
   いないため)。手法デモであり、半田市の実際の管路状態の評価・更新計画を
   示すものではありません。
 
+## 変更履歴
+
+[CHANGELOG.md](CHANGELOG.md) を参照してください。
+
 ## ライセンス
 
 - コード: MIT License([LICENSE](LICENSE))
