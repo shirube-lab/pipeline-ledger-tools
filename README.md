@@ -8,6 +8,7 @@ Python(geopandas)で自動化するツールとデモをまとめたリポジト
 | [work1-ledger-cleanup](work1-ledger-cleanup/) | 台帳レイヤの品質検査ツール(SonicWeb 系エクスポートの属性辞書抽出+一括 QA レポート) |
 | [work2-ledger-checker](work2-ledger-checker/) | 台帳 × 現地調査の突合チェック・Excel 調書自動生成(全合成データ) |
 | [work3-deterioration](work3-deterioration/) | 下水道管渠の劣化リスク評価・点検優先度スクリーニング(手法デモ) |
+| [work4-urgency](work4-urgency/) | TV カメラ調査結果からの緊急度判定(判定基準は JSON プロファイル・調査データは全合成) |
 
 解説記事(Qiita):
 
@@ -26,6 +27,8 @@ Python(geopandas)で自動化するツールとデモをまとめたリポジト
 - work3 の機械学習パートの点検ラベルは**合成**です(実点検データは公開されて
   いないため)。手法デモであり、半田市の実際の管路状態の評価・更新計画を
   示すものではありません。
+- work4 の調査データ(不良の記録)も**全て合成**です。管路の位置のみ半田市の
+  オープンデータを用いており、実際の管渠の状態評価ではありません。
 
 ## 変更履歴
 
@@ -55,4 +58,6 @@ python work2-ledger-checker/ledger_checker.py
 python work3-deterioration/prepare_data.py
 python work3-deterioration/score_priority.py
 python work3-deterioration/future_wave.py
+python work4-urgency/generate_survey_data.py   # work3 の出力が必要
+python work4-urgency/judge_urgency.py
 ```
