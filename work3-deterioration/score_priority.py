@@ -246,8 +246,10 @@ def main() -> None:
 
     # Double-risk flag: rank-A screening AND soft-ground terrain. This is
     # an AND of two independent screens (no reweighting of the score).
-    # Soft-ground classes follow the customary lowland / artificial-ground
-    # grouping of the J-SHIS geomorphological classification.
+    # Soft-ground classes: the author's selection from the J-SHIS lowland /
+    # artificial-ground classes. NOT "all lowland" — 扇状地, 自然堤防,
+    # 砂州・砂礫州 and 砂丘 are excluded. See the article for the rationale
+    # and its limits; other municipalities should revisit this list.
     SOFT_TERRAIN = {"干拓地", "埋立地", "三角州・海岸低地", "谷底低地",
                     "旧河道・旧池沼", "後背湿地", "砂丘・砂州間低地"}
     if "terrain_name" in df.columns:

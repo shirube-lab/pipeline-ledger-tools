@@ -43,6 +43,11 @@ print(proj.to_string(index=False))
 
 fig, ax = plt.subplots(figsize=(9, 5))
 ax.bar(proj["year"], proj["km_over50"], width=3.4, color="#d7191c", alpha=0.85)
+# Tick on the actual projection years. Matplotlib's default ticks land on
+# round years (2025, 2030, ...) which sit beside the bars, so readers match
+# each bar to the wrong year.
+ax.set_xticks(list(proj["year"]))
+ax.set_xticklabels([str(y) for y in proj["year"]])
 ax.set_xlabel("年")
 ax.set_ylabel("標準耐用年数50年を経過した延長 (km)")
 ax.set_title(f"経年管渠の将来推移(施工年度既知の {len(known):,} 本。"
