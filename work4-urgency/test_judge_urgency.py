@@ -1,7 +1,7 @@
 """Unit tests for judge_urgency.py (stdlib only — run: python test_judge_urgency.py).
 
 The first test reproduces the worked example printed in the guideline
-itself (H25 参考資料3 表2.7, Ⅲ-43): 25 pipes with a=6, b=3, c=2 gives an
+itself (H25 参考資料Ⅲ 表2.7, Ⅲ-43): 25 pipes with a=6, b=3, c=2 gives an
 a-rate of 24% >= 20% and therefore span rank A.
 """
 
@@ -53,7 +53,7 @@ def pipes(ranks: dict[str, int]) -> list[tuple]:
 
 # --- rate_rank: the guideline's own worked example -------------------------
 rank, rates = rate_rank(25, ["a"] * 6 + ["b"] * 3 + ["c"] * 2, TH)
-check("計算例(H25参考資料3 Ⅲ-43): 25本中a6/b3/c2 → a率24% → A",
+check("計算例(H25参考資料Ⅲ Ⅲ-43): 25本中a6/b3/c2 → a率24% → A",
       rank == "A" and rates["a_pct"] == 24.0)
 
 # --- rate boundaries -------------------------------------------------------
