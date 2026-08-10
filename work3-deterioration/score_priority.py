@@ -249,7 +249,7 @@ def main() -> None:
     # Soft-ground classes follow the customary lowland / artificial-ground
     # grouping of the J-SHIS geomorphological classification.
     SOFT_TERRAIN = {"干拓地", "埋立地", "三角州・海岸低地", "谷底低地",
-                    "旧河道", "後背湿地", "砂州・砂丘間低地"}
+                    "旧河道・旧池沼", "後背湿地", "砂丘・砂州間低地"}
     if "terrain_name" in df.columns:
         df["soft_ground"] = df["terrain_name"].isin(SOFT_TERRAIN)
         df["double_risk"] = (df["priority_rank"] == "A") & df["soft_ground"]
