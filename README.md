@@ -14,6 +14,8 @@ Python(geopandas)で自動化するツールとデモをまとめたリポジト
 
 1. [下水道管路のオープンデータで劣化リスク評価・点検優先度マップを作ってみた(Python/geopandas)](https://qiita.com/shirube-lab/items/303367cfc87f2772871a)
 2. [下水道管路の劣化リスク評価に「地形の目」を足す — J-SHIS 微地形区分と海岸線距離(Python/geopandas)](https://qiita.com/shirube-lab/items/c0e3a133b996a1971200)
+3. [属性名が全部「SAFIELD000」— 台帳 GIS エクスポートの属性辞書を XML から自動復元する(Python)](https://qiita.com/shirube-lab/items/52c4a7825968f4f7a7d0)
+4. [災害時の下水道台帳データ交換は GeoPackage へ — 国総研「地震対応における下水道管路データ交換標準仕様書(素案)」を実務者が読む](https://qiita.com/shirube-lab/items/b42400ed18695f9bac06)
 
 ## データについての宣言
 
