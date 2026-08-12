@@ -1,0 +1,112 @@
+{
+  "description": "国総研「地震対応における下水道管路データ交換標準仕様書(素案)」(令和8年3月) の下水道管路パッケージ 応用スキーマ文書の転記。ページ番号は印刷ページ(ノンブル)。転記元は素案 PDF のページ画像を目視で読んだもの。",
+  "source": {
+    "title": "地震対応における下水道管路データ交換標準仕様書(素案)",
+    "publisher": "国土交通省 国土技術政策総合研究所 上下水道研究部下水道研究室",
+    "date": "令和8年3月 (作成日 2026/3/13)",
+    "url": "https://www.nilim.go.jp/lab/ebg/pdf/202603000000000.pdf",
+    "pages": "応用スキーマ文書 pp.20-23、コードリスト pp.24-29 (印刷ページ = PDF面 - 2)"
+  },
+  "distribution_format": {
+    "file_format": "OGC GeoPackage",
+    "extension": ".gpkg",
+    "encoding": "UTF-8",
+    "source_page": "p.70 7-1. 配布書式情報"
+  },
+  "reference_system": {
+    "spatial": "日本測地系2024における緯度経度座標系",
+    "vertical": "東京湾平均海面(T.P.)を基準とする標高",
+    "source_page": "p.68 5-1. 空間参照系"
+  },
+  "features": {
+    "マンホール": {
+      "source_page": "p.21",
+      "definition": "管きょの維持管理のために起終点に接続された施設で、伏越し室、雨水吐き室を含む",
+      "geometry": {"name": "位置", "type": "GM_Point", "multiplicity": "1"},
+      "attributes": [
+        {"name": "施設番号", "type": "CharacterString", "multiplicity": "1", "definition": "施設を特定するための番号"},
+        {"name": "排除区分", "type": "code:排除区分", "multiplicity": "0..1", "definition": "流下する下水の種類"},
+        {"name": "種別", "type": "code:マンホール種別", "multiplicity": "0..1", "definition": "施設の種類"},
+        {"name": "道路種別", "type": "code:道路種別", "multiplicity": "0..1", "definition": "施設が存在する道路の種別"},
+        {"name": "道路管理者", "type": "code:道路管理者", "multiplicity": "0..1", "definition": "施設が存在する道路の管理者"},
+        {"name": "設置方法", "type": "code:設置方法", "multiplicity": "0..1", "definition": "施設の設置工事において採られた方法"},
+        {"name": "深さ", "type": "Integer", "multiplicity": "0..1", "unit": "mm", "definition": "地表面から施設下流側底面までの深さ"},
+        {"name": "排水区域名称", "type": "CharacterString", "multiplicity": "0..1", "note": "排水区域名称及び処理区域名称はどちらか必ず入力すること"},
+        {"name": "処理区域名称", "type": "CharacterString", "multiplicity": "0..1", "note": "排水区域名称及び処理区域名称はどちらか必ず入力すること"},
+        {"name": "処理分区域名称", "type": "CharacterString", "multiplicity": "0..1"},
+        {"name": "マンホール蓋種別", "type": "code:マンホール蓋種別", "multiplicity": "0..*", "note": "Ver.5 に記載がなくマンホール蓋機能のコード値を仮割当(管路協へ確認中)"},
+        {"name": "占用位置", "type": "code:占用位置", "multiplicity": "0..*"},
+        {"name": "図面番号", "type": "CharacterString", "multiplicity": "0..1"},
+        {"name": "緊急輸送路", "type": "code:対象区分", "multiplicity": "0..1"},
+        {"name": "防災拠点", "type": "code:対象区分", "multiplicity": "0..1"},
+        {"name": "自然災害危険地区", "type": "code:対象区分", "multiplicity": "0..1"},
+        {"name": "その他埋設環境", "type": "CharacterString", "multiplicity": "0..1"},
+        {"name": "点検箇所", "type": "CharacterString", "multiplicity": "0..1", "definition": "対象地区の名称"},
+        {"name": "その他", "type": "CharacterString", "multiplicity": "0..1", "definition": "特別構造の図面情報の名称"}
+      ]
+    },
+    "管きょ": {
+      "source_page": "pp.22-23",
+      "definition": "家庭や工場などから集めた汚水を処理場まで運ぶ管や、集水桝等から雨水を排水するための管",
+      "geometry": {"name": "形状", "type": "GM_Curve", "multiplicity": "1"},
+      "attributes": [
+        {"name": "施設番号", "type": "CharacterString", "multiplicity": "1"},
+        {"name": "排除区分", "type": "code:排除区分", "multiplicity": "0..1"},
+        {"name": "竣工年度", "type": "Integer", "multiplicity": "0..1", "definition": "施設の工事が完了した年度"},
+        {"name": "排水区域名称", "type": "CharacterString", "multiplicity": "0..1", "note": "排水区域名称及び処理区域名称はどちらか必ず入力すること"},
+        {"name": "処理区域名称", "type": "CharacterString", "multiplicity": "0..1", "note": "排水区域名称及び処理区域名称はどちらか必ず入力すること"},
+        {"name": "管材質", "type": "code:管材質", "multiplicity": "0..1"},
+        {"name": "断面形状", "type": "code:断面形状", "multiplicity": "0..1"},
+        {"name": "呼び径", "type": "Integer", "multiplicity": "0..1", "unit": "mm", "definition": "管の内径を概略的に表す呼称"},
+        {"name": "内法幅", "type": "Integer", "multiplicity": "0..1", "unit": "mm"},
+        {"name": "内法下幅", "type": "Integer", "multiplicity": "0..1", "unit": "mm"},
+        {"name": "内法高", "type": "Integer", "multiplicity": "0..1", "unit": "mm"},
+        {"name": "延長", "type": "Integer", "multiplicity": "0..1", "unit": "mm", "definition": "管きょ両端に位置するマンホールの中心間の距離"},
+        {"name": "処理分区域名称", "type": "CharacterString", "multiplicity": "0..1"},
+        {"name": "道路種別", "type": "code:道路種別", "multiplicity": "0..1"},
+        {"name": "道路管理者", "type": "code:道路管理者", "multiplicity": "0..1"},
+        {"name": "幹線流域", "type": "CharacterString", "multiplicity": "0..1", "definition": "下水が流入する幹線の名称"},
+        {"name": "図面番号", "type": "CharacterString", "multiplicity": "0..1"},
+        {"name": "占用位置", "type": "code:占用位置", "multiplicity": "0..1"},
+        {"name": "上流側管底深", "type": "Integer", "multiplicity": "0..1", "unit": "mm", "definition": "地表から対象管きょの上流側の管底までの深さ"},
+        {"name": "下流側管底深", "type": "Integer", "multiplicity": "0..1", "unit": "mm"},
+        {"name": "上流土被り", "type": "Integer", "multiplicity": "0..1", "unit": "mm", "definition": "地表から管きょの上流側天端までの深さ(地震対策マニュアルで管頂深と呼ばれている項目)"},
+        {"name": "下流土被り", "type": "Integer", "multiplicity": "0..1", "unit": "mm"},
+        {"name": "路線名", "type": "CharacterString", "multiplicity": "0..1"},
+        {"name": "その他", "type": "CharacterString", "multiplicity": "0..1"}
+      ],
+      "association_roles": [
+        {"name": "上流マンホール番号", "type": "CharacterString", "multiplicity": "0..1", "definition": "管きょの上流側のマンホール番号"},
+        {"name": "下流マンホール番号", "type": "CharacterString", "multiplicity": "0..1", "definition": "管きょの下流側のマンホール番号"}
+      ]
+    },
+    "公共ます": {
+      "source_page": "p.23",
+      "definition": "宅内から排出される汚水や雨水が合流する施設",
+      "geometry": {"name": "位置", "type": "GM_Point", "multiplicity": "1"},
+      "attributes": [
+        {"name": "施設番号", "type": "CharacterString", "multiplicity": "1"},
+        {"name": "ます種別", "type": "code:ます種別", "multiplicity": "0..1"}
+      ]
+    },
+    "取付け管": {
+      "source_page": "p.23",
+      "definition": "公共ますとマンホールあるいは管きょを接続させる施設",
+      "geometry": {"name": "形状", "type": "GM_Curve", "multiplicity": "1"},
+      "attributes": []
+    }
+  },
+  "code_lists": {
+    "排除区分": {"source_page": "p.25", "codes": {"01": "合流", "02": "汚水", "03": "雨水", "04": "中水", "77": "光ファイバー専用", "88": "その他", "99": "不明"}},
+    "マンホール種別": {"source_page": "p.25", "codes": {"01": "Y号人孔", "02": "0号人孔", "03": "1号人孔", "04": "2号人孔", "05": "3号人孔", "06": "4号人孔", "07": "5号人孔", "08": "6号人孔", "09": "7号人孔", "10": "特1号人孔", "11": "特2号人孔", "12": "特3号人孔", "13": "特4号人孔", "14": "矩形きょ人孔", "15": "特殊人孔", "16": "伏越人孔", "17": "その他人孔", "77": "仮想人孔", "88": "その他", "99": "不明"}},
+    "設置方法": {"source_page": "p.26", "codes": {"01": "組立て式", "02": "現場打ち", "03": "下部現場打ち", "88": "その他", "99": "不明"}},
+    "マンホール蓋種別": {"source_page": "p.26", "codes": {"01": "通常", "02": "圧力", "03": "飛散防止", "04": "投雪", "88": "その他", "99": "不明"}},
+    "道路種別": {"source_page": "p.26", "codes": {"01": "国道", "02": "都道", "03": "道道", "04": "府道", "05": "県道", "06": "市・区道", "07": "町道", "08": "村道", "09": "私道", "88": "その他", "99": "不明"}},
+    "占用位置": {"source_page": "p.27", "codes": {"01": "歩道", "02": "車道", "88": "その他", "99": "不明"}},
+    "対象区分": {"source_page": "p.27", "codes": {"01": "対象", "02": "対象外"}, "note": "88/99 を持たない唯一のコードリスト"},
+    "道路管理者": {"source_page": "p.27", "codes": {"01": "国", "02": "都", "03": "道", "04": "府", "05": "県", "06": "市・区", "07": "町", "08": "村", "88": "その他", "99": "不明"}},
+    "管材質": {"source_page": "p.28", "codes": {"01": "鉄筋コンクリート", "02": "遠心力鉄筋コンクリート(ヒューム管)", "03": "ガラス繊維鉄筋コンクリート", "04": "コンクリート系セグメント", "05": "鋼製セグメント", "06": "ミニシールド用鉄筋コンクリートセグメント", "07": "ダクタイル鋳鉄管", "08": "硬質塩化ビニル(薄肉管)", "09": "硬質塩化ビニル(厚肉管)", "10": "高剛性硬質塩化ビニル", "11": "強化プラスチック複合管", "12": "ポリエチレン", "13": "レジンコンクリート", "14": "陶管", "15": "プレキャストコンクリート", "16": "現場打鉄筋コンクリート", "88": "その他", "99": "不明"}},
+    "断面形状": {"source_page": "p.29", "codes": {"01": "円形", "02": "卵形", "03": "馬蹄形", "04": "矩形暗きょ", "05": "矩形開きょ", "06": "台形開きょ", "07": "蓋掛矩形きょ", "08": "蓋掛台形きょ", "09": "U字側溝", "10": "LO型側溝", "11": "複断面開きょ", "12": "円形背割管", "13": "矩形背割管", "14": "その他の開きょ", "15": "その他の暗きょ", "16": "その他の側溝", "17": "その他の特殊断面きょ", "88": "その他", "99": "不明"}},
+    "ます種別": {"source_page": "p.29", "codes": {"10": "ますなし", "20": "汚水ます", "30": "雨水ます", "88": "その他", "99": "不明"}, "note": "コード体系が 2 桁 10 刻みで他リストと異なる"}
+  }
+}
