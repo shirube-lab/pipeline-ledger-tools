@@ -220,10 +220,12 @@ def check_either_or(layers: dict[str, gpd.GeoDataFrame]) -> None:
 def write_reports(layers: dict[str, gpd.GeoDataFrame]) -> None:
     proj_db = pyproj.database.get_database_metadata("EPSG.VERSION")
     lines = ["# 変換ギャップ分析 — 半田市データ → 交換標準(素案)", ""]
-    lines.append(f"変換先の空間参照系について: 素案は「日本測地系2024における緯度経度座標系」を指定する(印刷 p.68)が、"
-                 f"本変換に使った pyproj {pyproj.__version__}(EPSG データベース {proj_db})には JGD2024 の地理座標系が"
-                 f"登録されていない。到達できたのは JGD2011 地理座標系(EPSG:6668)まで。JGD2011→2024 の補正には"
-                 f"国土地理院の座標変換(POS2JGD 等)が別途必要になる。")
+    lines.append(f"変換先の空間参照系について: 素案は「日本測地系2024における緯度経度座標系」を指定する(印刷 p.68)。"
+                 f"水平座標の数値は JGD2011 から引き継がれる(測地成果2024 は成果の名称変更で、緯度経度の値は変わらない)"
+                 f"ため座標値の変換は不要だが、CRS を「JGD2024」と**名乗る**ための EPSG コードは素案公表(2026 年 3 月)の"
+                 f"翌月にあたる 2026 年 4 月(EPSG Dataset v12.055)にようやく登録された。本変換に使った "
+                 f"pyproj {pyproj.__version__}(同梱 EPSG データベース {proj_db})ではまだ参照できないため、"
+                 f"JGD2011 地理座標系(EPSG:6668)で出力した(値は同一・ラベルが旧称)。")
     lines.append("")
     for feat, g in layers.items():
         spec_attrs = [a["name"] for a in SCHEMA["features"][feat]["attributes"]]
