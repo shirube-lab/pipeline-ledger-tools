@@ -81,9 +81,12 @@ def convert_pipes() -> gpd.GeoDataFrame:
     unmapped = kanshu[material.isna()].value_counts()
     if len(unmapped):
         raise SystemExit(f"unmapped 管種名称 values: {dict(unmapped)}")
-    for value, cnt in kanshu.fillna("(空欄)").value_counts().items():
-        code = norm_map.get(value, norm_map["__NULL__"])
-        basis = next((v["basis"] for k, v in mat_map.items() if nfkc(k) == value), "")
+    # Log with the ledger's raw spelling (half-width katakana and all) so the
+    # log stays greppable against the source data; nfkc only for the lookup.
+    for value, cnt in src["SAFIELD001"].fillna("(空欄)").value_counts().items():
+        key = nfkc(value) if value != "(空欄)" else "__NULL__"
+        code = norm_map.get(key, norm_map["__NULL__"])
+        basis = next((v["basis"] for k, v in mat_map.items() if nfkc(k) == key), "")
         if "判断" in basis:
             log_judgment(f"管材質: 「{value}」{cnt}本 → {code}。{basis}")
 
@@ -143,8 +146,9 @@ def convert_manholes() -> gpd.GeoDataFrame:
     unmapped = shubetsu[kind.isna()].value_counts()
     if len(unmapped):
         raise SystemExit(f"unmapped 人孔種別名称 values: {dict(unmapped)}")
-    for value, cnt in shubetsu.fillna("(空欄)").value_counts().items():
-        entry = next((v for k, v in MAPPING["manhole_code_map"].items() if nfkc(k) == value), None)
+    for value, cnt in src["SAFIELD009"].fillna("(空欄)").value_counts().items():
+        key = nfkc(value) if value != "(空欄)" else "__NULL__"
+        entry = next((v for k, v in MAPPING["manhole_code_map"].items() if nfkc(k) == key), None)
         if entry and "判断" in entry.get("basis", ""):
             log_judgment(f"マンホール種別: 「{value}」{cnt}基 → {entry['code']}。{entry['basis']}")
 
