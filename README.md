@@ -9,6 +9,7 @@ Python(geopandas)で自動化するツールとデモをまとめたリポジト
 | [work2-ledger-checker](work2-ledger-checker/) | 台帳 × 現地調査の突合チェック・Excel 調書自動生成(全合成データ) |
 | [work3-deterioration](work3-deterioration/) | 下水道管渠の劣化リスク評価・点検優先度スクリーニング(手法デモ) |
 | [work4-urgency](work4-urgency/) | TV カメラ調査結果からの緊急度判定(判定基準は JSON プロファイル・調査データは全合成) |
+| [work5-exchange-standard](work5-exchange-standard/) | 公開台帳データを国総研データ交換標準(素案)の GeoPackage へ変換し、ギャップを差分レポート化 |
 
 解説記事(Qiita):
 
