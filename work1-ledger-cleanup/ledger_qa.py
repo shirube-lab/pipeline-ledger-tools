@@ -248,7 +248,7 @@ def main() -> None:
         for ws in writer.book.worksheets:
             style_sheet(ws)
 
-    print(f"\nNG {len(ng)} 件 / 要確認 {len(warn)} 件")
+    print(f"\nNG {len(ng)} 項目 / 要確認 {len(warn)} 項目")
     print(ng.to_string(index=False))
     print(f"\nreport -> {OUT_XLSX}")
 
