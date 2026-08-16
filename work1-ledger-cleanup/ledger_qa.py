@@ -41,6 +41,15 @@ YEAR_MIN = 1900
 COVER_RANGE_M = (0.0, 15.0)
 
 
+# Material families whose Japanese sewer standard has a known first year.
+# A construction year BEFORE the standard existed marks the row as suspect.
+# 塩ビ系: JSWAS K-1 制定 1974-06-25 (日本下水道協会 規格制定状況一覧、
+# 国総研資料第878号 第2章 p.35 でも確認)
+MATERIAL_MIN_YEAR = {
+    "塩ビ": (1974, "JSWAS K-1 制定(1974)より前の施工年度"),
+}
+
+
 @dataclass
 class LayerSpec:
     rel: str
@@ -49,6 +58,11 @@ class LayerSpec:
     diameter_col: str | None = None
     cover_cols: list[str] = field(default_factory=list)
     diameter_range: tuple[int, int] = (10, 3500)
+    material_col: str | None = None      # enables material-vs-year cross check
+    key_col: str | None = None           # business key (uniqueness check)
+    key_label: str = "業務キー"
+    key_scope: str | None = None         # column whose value scopes the key
+                                         # ("SASTYLEID3" = first 3 digits)
 
 
 LAYERS = [
@@ -63,9 +77,11 @@ LAYERS = [
               cover_cols=["SAFIELD016"]),
     LayerSpec("gesui_osui/24021/24021.shp", "下水_管渠",
               year_col="SAFIELD000", diameter_col="SAFIELD002",
-              cover_cols=["SAFIELD003", "SAFIELD004"], diameter_range=(100, 9000)),
+              cover_cols=["SAFIELD003", "SAFIELD004"], diameter_range=(100, 9000),
+              material_col="SAFIELD001"),
     LayerSpec("gesui_osui/24001/24001.shp", "下水_マンホール",
-              year_col="SAFIELD018"),
+              year_col="SAFIELD018",
+              key_col="SAFIELD002", key_label="人孔キー", key_scope="SASTYLEID3"),
     LayerSpec("gesui_osui/24051/24051.shp", "下水_取付管",
               diameter_col="SAFIELD001", diameter_range=(50, 300)),
     LayerSpec("gesui_osui/24041/24041.shp", "下水_桝",
@@ -142,6 +158,43 @@ def check_layer(spec: LayerSpec) -> list[dict]:
         under = diam.notna() & (diam < lo) & ~zero
         add("口径の下限未満(入力疑義)", "NG" if under.any() else "OK",
             int(under.sum()), f"{lo}mm 未満(0 を除く)。桁誤り等の疑い")
+
+    # --- cross check: material family vs construction year ---------------
+    # Born from the series: a 1955 PVC pipe surfaced while writing about the
+    # PVC generation shift. A material cannot predate its product standard.
+    if spec.material_col and spec.material_col in gdf.columns and spec.year_col:
+        years = pd.to_numeric(
+            gdf[spec.year_col].astype(str).str.extract(r"(\d{4})")[0],
+            errors="coerce")
+        mat = gdf[spec.material_col].astype(str)
+        for family, (min_year, why) in MATERIAL_MIN_YEAR.items():
+            hit = mat.str.contains(family, na=False) & years.notna() & (years < min_year)
+            add(f"管種×年代の整合({family}系)", "NG" if hit.any() else "OK",
+                int(hit.sum()), why + "。桁誤り・管種誤記・更生の未反映等の疑い")
+
+    # --- business-key uniqueness, scoped and unscoped --------------------
+    # Born from the series: manhole keys turned out to be unique only WITHIN
+    # a drainage system (2,505 cross-system pairs, 2 real duplicates). A raw
+    # duplicate count hides that structure, so report both.
+    if spec.key_col and spec.key_col in gdf.columns:
+        key = gdf[spec.key_col].astype("string")
+        n_blank = int(key.isna().sum())
+        add(f"{spec.key_label}の欠損", "NG" if n_blank else "OK", n_blank,
+            "施設を特定するキーが空")
+        nn = key.dropna()
+        n_dup = int(nn.duplicated().sum())
+        note = ""
+        if spec.key_scope == "SASTYLEID3" and "SASTYLEID" in gdf.columns:
+            scope = gdf.loc[nn.index, "SASTYLEID"].astype(str).str[:3]
+            scoped = scope + "|" + nn
+            n_dup_scoped = int(scoped.duplicated().sum())
+            note = (f"全体重複 {n_dup} のうち系統内の真の重複は {n_dup_scoped}。"
+                    "残りは系統別採番(キーは系統内でのみ一意)によるもの")
+            add(f"{spec.key_label}の重複(系統内)",
+                "NG" if n_dup_scoped else "OK", n_dup_scoped, note)
+        add(f"{spec.key_label}の重複(全体)",
+            "要確認" if n_dup else "OK", n_dup,
+            "系統をまたぐ再利用を含む" if note else "")
 
     for col in spec.cover_cols:
         if col not in gdf.columns:
