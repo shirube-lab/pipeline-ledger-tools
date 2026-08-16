@@ -18,6 +18,7 @@ Python(geopandas)で自動化するツールとデモをまとめたリポジト
 3. [属性名が全部「SAFIELD000」— 台帳 GIS エクスポートの属性辞書を XML から自動復元する(Python)](https://qiita.com/shirube-lab/items/52c4a7825968f4f7a7d0)
 4. [災害時の下水道台帳データ交換は GeoPackage へ — 国総研「地震対応における下水道管路データ交換標準仕様書(素案)」を実務者が読む](https://qiita.com/shirube-lab/items/b42400ed18695f9bac06)
 5. [素案どおりの GeoPackage を実データで作ってみたら、埋まったのは 29% だった — 国総研「下水道管路データ交換標準仕様書(素案)」×半田市オープンデータ](https://qiita.com/shirube-lab/items/00f79796f0c462944a1b)
+6. [下水道管きょの「緊急度」を TV カメラ調査結果から判定する — 国交省の手引き(案)の判定例を Python で実装した(判定根拠つき)](https://qiita.com/shirube-lab/items/d142283661cd149617d5)
 
 ## データについての宣言
 
