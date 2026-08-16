@@ -9,7 +9,7 @@ delivery inspection would run:
 - attributes:   missing rates of key fields, out-of-range values
                 (cover depth, diameter, year), style-ID mixing
 
-Output: qa_report.xlsx (one sheet per layer + summary), console summary.
+Output: qa_report.xlsx (summary / all results / NG list), console summary.
 """
 
 from __future__ import annotations
