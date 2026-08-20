@@ -60,6 +60,7 @@ python data/handa/setup_data.py
 # 2. 各作品の実行(詳細は各 README)
 python work1-ledger-cleanup/parse_s2a_fields.py
 python work1-ledger-cleanup/ledger_qa.py
+python work1-ledger-cleanup/fill_rate_report.py
 python work2-ledger-checker/generate_sample_data.py
 python work2-ledger-checker/ledger_checker.py
 python work3-deterioration/prepare_data.py
