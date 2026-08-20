@@ -20,12 +20,28 @@ placeholder-suspect cases stay visible.
 
 from __future__ import annotations
 
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import geopandas as gpd
 import pandas as pd
 from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
+
+LAYER_NS = "{http://sonicweb.kkc.co.jp/s2a/layer/200902}"
+
+
+def layer_titles(group_dir: Path) -> dict[str, str]:
+    """Layer-number -> Japanese title, from the group's layer.xml."""
+    xml = group_dir / "layer.xml"
+    if not xml.exists():
+        return {}
+    titles: dict[str, str] = {}
+    for lyr in ET.parse(xml).getroot().iter(f"{LAYER_NS}Layer"):
+        name = lyr.findtext(f"{LAYER_NS}name") or ""
+        if name.isdigit():
+            titles[name] = lyr.findtext(f"{LAYER_NS}title") or ""
+    return titles
 
 BASE = Path(__file__).resolve().parents[1] / "data" / "handa"
 DICT_CSV = Path(__file__).parent / "s2a_field_mapping.csv"
@@ -69,9 +85,7 @@ def main() -> None:
             "業務属性列数": len(sa),
             "属性辞書": "あり" if sa else "なし",
             "分類": kind,
-            "レイヤ名": {"24001": "マンホール", "24021": "管渠", "24041": "桝",
-                     "24051": "取付管", "22001": "管路", "22061": "給水管",
-                     "22101": "弁栓", "22116": "消火栓"}.get(code, "(配布物に名称なし)"),
+            "レイヤ名": layer_titles(BASE / grp).get(code, "(layer.xml に定義なし)"),
         })
 
     # folder duplicates: same code in both sewer folders, same data apart
