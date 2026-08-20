@@ -88,8 +88,11 @@ def main() -> None:
             drop = [c for c in ("SAUPDATE",) if c in a.columns]
             aa = a.drop(columns=drop).sort_values("SAUID").reset_index(drop=True)
             bb = b.drop(columns=drop).sort_values("SAUID").reset_index(drop=True)
-            same = aa.equals(bb)
-        note = ("汚水フォルダと同一データ(差はエクスポート日時列のみ)" if same
+            # geometry too (order-insensitive): identical multiset of WKB
+            geom_same = (sorted(frames[("gesui_osui", code)].geometry.to_wkb())
+                         == sorted(frames[("gesui_usui", code)].geometry.to_wkb()))
+            same = aa.equals(bb) and geom_same
+        note = ("汚水フォルダと同一データ(図形一致・属性の差はエクスポート日時列のみ)" if same
                 else "汚水フォルダと同番号だが内容差あり(要確認)")
         if same:
             dup_note[("gesui_usui", code)] = note
