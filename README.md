@@ -20,6 +20,7 @@ Python(geopandas)で自動化するツールとデモをまとめたリポジト
 5. [素案どおりの GeoPackage を実データで作ってみたら、埋まったのは 29% だった — 国総研「下水道管路データ交換標準仕様書(素案)」×半田市オープンデータ](https://qiita.com/shirube-lab/items/00f79796f0c462944a1b)
 6. [下水道管きょの「緊急度」を TV カメラ調査結果から判定する — 国交省の手引き(案)の判定例を Python で実装した(判定根拠つき)](https://qiita.com/shirube-lab/items/d142283661cd149617d5)
 7. [下水道管の主役はいつ塩ビに変わったのか — オープンデータで管種の世代交代を追い、「塩ビの健全率予測式がまだ立っていない」現在地を確かめる](https://qiita.com/shirube-lab/items/ec7d89391940e0f17058)
+8. [台帳 GIS・20 万レコードの「検収」自動化をめざす — 分析で見つけた不整合を次の検査項目に昇華する品質検査ツール(Python/geopandas)](https://qiita.com/shirube-lab/items/57700e60921ab079fabf)
 
 ## データについての宣言
 
