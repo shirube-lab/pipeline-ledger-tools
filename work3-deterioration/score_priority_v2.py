@@ -99,27 +99,45 @@ def compute_trunk() -> tuple[pd.DataFrame, dict]:
         "flipped": int(uphill.sum()),
     }
 
-    # --- accumulate per system (Kahn topological DP) ---------------------
+    # --- accumulate per system (Kahn order, UNIQUE upstream edges) --------
+    # The network is not a tree: branches re-converge (diamond shapes), so
+    # naively adding numbers downstream would double-count shared upstream
+    # once per path. Carry the SET of upstream edges (a bitset per node)
+    # and sum lengths over the de-duplicated set instead.
     trunk = np.full(len(pipes), np.nan)
     stats["cycle_edges"] = 0
+    stats["branch_nodes"] = 0
     for st in ("汚水", "雨水"):
         idx = np.where(system == st)[0]
+        pos = {i: p for p, i in enumerate(idx)}       # local bit position
+        len_vec = length[idx].astype(np.float64)
+        nbits = len(idx)
+        nbytes = (nbits + 7) // 8
         out_edges: dict = defaultdict(list)
         indeg: dict = defaultdict(int)
         nodes = set()
         for i in idx:
             a, b = (ke[i], ks[i]) if uphill[i] else (ks[i], ke[i])
-            out_edges[a].append((b, length[i], i))
+            out_edges[a].append((b, i))
             indeg[b] += 1
             nodes.add(a)
             nodes.add(b)
-        upstream: dict = defaultdict(float)
+        stats["branch_nodes"] += sum(1 for n in nodes if len(out_edges[n]) >= 2)
+        up_set: dict = defaultdict(int)               # node -> bitset of upstream edges
         q = deque(n for n in nodes if indeg[n] == 0)
         while q:
             n = q.popleft()
-            for b, ln, i in out_edges[n]:
-                trunk[i] = upstream[n] + ln
-                upstream[b] += upstream[n] + ln
+            mask = up_set.pop(n, 0)
+            if mask:
+                bits = np.unpackbits(
+                    np.frombuffer(mask.to_bytes(nbytes, "little"), dtype=np.uint8),
+                    bitorder="little")[:nbits]
+                w_n = float(bits @ len_vec)           # unique upstream length at node n
+            else:
+                w_n = 0.0
+            for b, i in out_edges[n]:
+                trunk[i] = w_n + length[i]
+                up_set[b] |= mask | (1 << pos[i])
                 indeg[b] -= 1
                 if indeg[b] == 0:
                     q.append(b)
