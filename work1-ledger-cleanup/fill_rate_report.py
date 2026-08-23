@@ -12,6 +12,11 @@ Three outputs (fill_rate_report.xlsx):
                  with Japanese names restored from the XML dictionary
 - サマリ       : headline numbers for the article
 
+Read "fill rate" strictly as "presence of a value in the DISTRIBUTED files".
+Public releases commonly omit fields on purpose (asset numbers, contractor
+names, distribution blocks, ...), so an all-blank column says nothing about
+how the city keeps its internal ledger.
+
 "Filled" = not null and not blank/whitespace after strip. Zero counts as
 filled (placeholder zeros are a value-plausibility problem — ledger_qa's
 job — not a fill problem); numeric columns also get a zero-rate column so
