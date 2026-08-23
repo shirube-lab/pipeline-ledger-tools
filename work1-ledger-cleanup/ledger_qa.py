@@ -241,6 +241,7 @@ def style_sheet(ws, max_width: int = 50) -> None:
     ws.page_setup.fitToHeight = 0
     ws.sheet_properties.pageSetUpPr = PageSetupProperties(fitToPage=True)
     ws.print_title_rows = "1:1"
+    ws.print_options.gridLines = True   # screen gridlines are NOT printed by default
 
 
 def main() -> None:
@@ -258,6 +259,7 @@ def main() -> None:
         {"項目": "検査項目数", "値": len(report)},
         {"項目": "NG 検出", "値": len(ng)},
         {"項目": "要確認", "値": len(warn)},
+        {"項目": "検査実行日", "値": dt.date.today().isoformat()},
         {"項目": "検査基準日", "値": f"{THIS_YEAR}年"},
     ])
 

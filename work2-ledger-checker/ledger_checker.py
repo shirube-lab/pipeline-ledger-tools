@@ -142,6 +142,7 @@ def style_sheet(ws, max_width: int = 40) -> None:
     ws.page_setup.fitToHeight = 0
     ws.sheet_properties.pageSetUpPr = PageSetupProperties(fitToPage=True)
     ws.print_title_rows = "1:1"
+    ws.print_options.gridLines = True   # screen gridlines are NOT printed by default
 
 
 def write_report(path: str, ledger: pd.DataFrame, survey: pd.DataFrame,

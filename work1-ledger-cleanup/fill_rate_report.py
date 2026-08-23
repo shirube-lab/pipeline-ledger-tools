@@ -25,6 +25,7 @@ placeholder-suspect cases stay visible.
 
 from __future__ import annotations
 
+import datetime as dt
 import unicodedata
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -89,6 +90,7 @@ def style_sheet(ws, max_width: int = 60) -> None:
     ws.page_setup.fitToHeight = 0
     ws.sheet_properties.pageSetUpPr = PageSetupProperties(fitToPage=True)
     ws.print_title_rows = "1:1"
+    ws.print_options.gridLines = True   # screen gridlines are NOT printed by default
 
 
 def filled(series: pd.Series) -> pd.Series:
@@ -170,6 +172,7 @@ def main() -> None:
     rates = pd.DataFrame(rate_rows)
 
     summary = pd.DataFrame([
+        {"項目": "集計実行日", "値": dt.date.today().isoformat()},
         {"項目": "配布ファイル数", "値": len(inv)},
         {"項目": "実質レイヤ数(重複を除く)", "値": len(inv) - len(dup_note)},
         {"項目": "うち業務属性を持つレイヤ", "値": int((inv["重複"] == "").mul(inv["業務属性列数"] > 0).sum())},

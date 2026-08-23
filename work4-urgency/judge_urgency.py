@@ -244,21 +244,33 @@ def style_sheet(ws, max_width: int = 60) -> None:
     ws.page_setup.fitToHeight = 0
     ws.sheet_properties.pageSetUpPr = PageSetupProperties(fitToPage=True)
     ws.print_title_rows = "1:1"
+    ws.print_options.gridLines = True   # screen gridlines are NOT printed by default
 
 
 def criteria_sheet_rows(criteria: dict) -> pd.DataFrame:
-    """Flatten the criteria profile into a source-annotated table."""
+    """Flatten the criteria profile into a source-annotated table.
+
+    Source labels start with the key of an entry in criteria["sources"]
+    ("H21 表2.3(p.12)"), so each row also carries the document title and
+    URL — the reader can open the source without leaving the workbook.
+    """
+    by_key = {s["key"]: s for s in criteria.get("sources", [])}
+
+    def ref(label: str) -> dict:
+        src = by_key.get(label.split()[0], {})
+        return {"出典": label, "出典資料": src.get("title", ""), "出典URL": src.get("url", "")}
+
     rows = []
     for item, spec in criteria["span_items"].items():
         if "ranks" in spec:
             for rank, desc in spec["ranks"].items():
                 rows.append({"区分": "スパン評価", "項目": item, "管種": "-", "ランク": rank,
-                             "基準": desc, "出典": spec["source"]})
+                             "基準": desc, **ref(spec["source"])})
         else:
             for band in spec["ranks_by_diameter"]:
                 for rank in SPAN_SEVERITY:
                     rows.append({"区分": "スパン評価", "項目": f"{item}(内径{band['diameter_mm_max']}mm以下区分)",
-                                 "管種": "-", "ランク": rank, "基準": band[rank], "出典": spec["source"]})
+                                 "管種": "-", "ランク": rank, "基準": band[rank], **ref(spec["source"])})
     for item, spec in criteria["pipe_items"].items():
         for mat_key, ranks in spec["ranks"].items():
             mat_name = criteria["materials"][mat_key]
@@ -266,12 +278,12 @@ def criteria_sheet_rows(criteria: dict) -> pd.DataFrame:
                 if desc is None:
                     continue
                 rows.append({"区分": "管1本評価", "項目": item, "管種": mat_name, "ランク": rank,
-                             "基準": desc, "出典": spec["source"]})
+                             "基準": desc, **ref(spec["source"])})
     for grade, spec in criteria["urgency"].items():
         if grade == "source":
             continue
         rows.append({"区分": "緊急度", "項目": f"緊急度{grade}", "管種": "-", "ランク": "-",
-                     "基準": f"{spec['rule']}({spec['meaning']})", "出典": criteria["urgency"]["source"]})
+                     "基準": f"{spec['rule']}({spec['meaning']})", **ref(criteria["urgency"]["source"])})
     return pd.DataFrame(rows)
 
 
