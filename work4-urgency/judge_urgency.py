@@ -31,11 +31,13 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import unicodedata
 from pathlib import Path
 
 import pandas as pd
 from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.properties import PageSetupProperties
 
 HERE = Path(__file__).parent
 
@@ -215,15 +217,33 @@ def judge_span(span: pd.Series, defects: pd.DataFrame, criteria: dict) -> dict:
     }
 
 
-def style_sheet(ws) -> None:
+def display_width(text: str) -> int:
+    """Width in Excel character units: CJK (and ambiguous) glyphs count double."""
+    return sum(2 if unicodedata.east_asian_width(ch) in "FWA" else 1 for ch in text)
+
+
+def style_sheet(ws, max_width: int = 60) -> None:
+    """Make a sheet presentable the way a deliverable workbook is expected to be.
+
+    Header row: filled, white bold, centred. Column width: fitted to the
+    widest value counting CJK glyphs as two units (len() would under-size
+    Japanese headers). Freeze the header. Print: A4 landscape, all columns
+    on one page width, header row repeated on every printed page.
+    """
     for cell in ws[1]:
         cell.fill = HEADER_FILL
         cell.font = HEADER_FONT
         cell.alignment = Alignment(horizontal="center")
     for idx, col in enumerate(ws.columns, start=1):
-        width = max(len(str(c.value)) for c in col if c.value is not None)
-        ws.column_dimensions[get_column_letter(idx)].width = min(width + 4, 60)
+        width = max(display_width(str(c.value)) for c in col if c.value is not None)
+        ws.column_dimensions[get_column_letter(idx)].width = min(width + 2, max_width)
     ws.freeze_panes = "A2"
+    ws.page_setup.orientation = "landscape"
+    ws.page_setup.paperSize = ws.PAPERSIZE_A4
+    ws.page_setup.fitToWidth = 1
+    ws.page_setup.fitToHeight = 0
+    ws.sheet_properties.pageSetUpPr = PageSetupProperties(fitToPage=True)
+    ws.print_title_rows = "1:1"
 
 
 def criteria_sheet_rows(criteria: dict) -> pd.DataFrame:
