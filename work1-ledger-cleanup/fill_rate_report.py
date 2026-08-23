@@ -83,6 +83,9 @@ def style_sheet(ws, max_width: int = 60) -> None:
     for idx, col in enumerate(ws.columns, start=1):
         width = max(display_width(str(c.value)) for c in col if c.value is not None)
         ws.column_dimensions[get_column_letter(idx)].width = min(width + 2, max_width)
+        if width + 2 > max_width:            # long text: wrap instead of clipping
+            for c in col[1:]:
+                c.alignment = Alignment(wrap_text=True, vertical="top")
     ws.freeze_panes = "A2"
     ws.page_setup.orientation = "landscape"
     ws.page_setup.paperSize = ws.PAPERSIZE_A4
@@ -172,7 +175,7 @@ def main() -> None:
     rates = pd.DataFrame(rate_rows)
 
     summary = pd.DataFrame([
-        {"項目": "集計実行日", "値": dt.date.today().isoformat()},
+        {"項目": "集計実行日", "値": dt.date.today()},
         {"項目": "配布ファイル数", "値": len(inv)},
         {"項目": "実質レイヤ数(重複を除く)", "値": len(inv) - len(dup_note)},
         {"項目": "うち業務属性を持つレイヤ", "値": int((inv["重複"] == "").mul(inv["業務属性列数"] > 0).sum())},

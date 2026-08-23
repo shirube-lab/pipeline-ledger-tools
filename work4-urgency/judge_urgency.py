@@ -237,6 +237,9 @@ def style_sheet(ws, max_width: int = 60) -> None:
     for idx, col in enumerate(ws.columns, start=1):
         width = max(display_width(str(c.value)) for c in col if c.value is not None)
         ws.column_dimensions[get_column_letter(idx)].width = min(width + 2, max_width)
+        if width + 2 > max_width:            # long text: wrap instead of clipping
+            for c in col[1:]:
+                c.alignment = Alignment(wrap_text=True, vertical="top")
     ws.freeze_panes = "A2"
     ws.page_setup.orientation = "landscape"
     ws.page_setup.paperSize = ws.PAPERSIZE_A4
@@ -292,7 +295,7 @@ def write_report(path: Path, results: pd.DataFrame, defects: pd.DataFrame,
     order = ["Ⅰ", "Ⅱ", "Ⅲ", "異常なし"]
     counts = results["緊急度"].value_counts()
     summary = pd.DataFrame(
-        [{"項目": "判定実行日", "値": dt.date.today().isoformat()},
+        [{"項目": "判定実行日", "値": dt.date.today()},
          {"項目": "基準プロファイル", "値": criteria["profile_name"]},
          {"項目": "判定スパン数", "値": len(results)},
          *[{"項目": f"緊急度{g}" if g != "異常なし" else g, "値": int(counts.get(g, 0))} for g in order],
@@ -308,6 +311,14 @@ def write_report(path: Path, results: pd.DataFrame, defects: pd.DataFrame,
             errors.to_excel(writer, sheet_name="入力エラー", index=False)
         for ws in writer.book.worksheets:
             style_sheet(ws)
+        # make the source URLs clickable on the criteria sheet
+        crit = writer.book["判定基準と出典"]
+        url_col = [c.value for c in crit[1]].index("出典URL") + 1
+        for row in range(2, crit.max_row + 1):
+            cell = crit.cell(row=row, column=url_col)
+            if cell.value:
+                cell.hyperlink = cell.value
+                cell.style = "Hyperlink"
         ws = writer.book["スパン別判定"]
         urgency_col = list(results.columns).index("緊急度") + 1
         for row in range(2, len(results) + 2):

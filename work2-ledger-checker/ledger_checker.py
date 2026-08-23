@@ -135,6 +135,9 @@ def style_sheet(ws, max_width: int = 40) -> None:
     for idx, col in enumerate(ws.columns, start=1):
         width = max(display_width(str(c.value)) for c in col if c.value is not None)
         ws.column_dimensions[get_column_letter(idx)].width = min(width + 2, max_width)
+        if width + 2 > max_width:            # long text: wrap instead of clipping
+            for c in col[1:]:
+                c.alignment = Alignment(wrap_text=True, vertical="top")
     ws.freeze_panes = "A2"
     ws.page_setup.orientation = "landscape"
     ws.page_setup.paperSize = ws.PAPERSIZE_A4
@@ -150,7 +153,7 @@ def write_report(path: str, ledger: pd.DataFrame, survey: pd.DataFrame,
                  validity: pd.DataFrame) -> None:
     summary = pd.DataFrame(
         [
-            {"項目": "チェック実行日", "値": dt.date.today().isoformat()},
+            {"項目": "チェック実行日", "値": dt.date.today()},
             {"項目": "台帳レコード数", "値": len(ledger)},
             {"項目": "調査レコード数", "値": len(survey)},
             {"項目": "ID差分件数", "値": len(id_diff)},

@@ -234,6 +234,9 @@ def style_sheet(ws, max_width: int = 50) -> None:
     for idx, col in enumerate(ws.columns, start=1):
         width = max(display_width(str(c.value)) for c in col if c.value is not None)
         ws.column_dimensions[get_column_letter(idx)].width = min(width + 2, max_width)
+        if width + 2 > max_width:            # long text: wrap instead of clipping
+            for c in col[1:]:
+                c.alignment = Alignment(wrap_text=True, vertical="top")
     ws.freeze_panes = "A2"
     ws.page_setup.orientation = "landscape"
     ws.page_setup.paperSize = ws.PAPERSIZE_A4
@@ -259,7 +262,7 @@ def main() -> None:
         {"項目": "検査項目数", "値": len(report)},
         {"項目": "NG 検出", "値": len(ng)},
         {"項目": "要確認", "値": len(warn)},
-        {"項目": "検査実行日", "値": dt.date.today().isoformat()},
+        {"項目": "検査実行日", "値": dt.date.today()},
         {"項目": "検査基準日", "値": f"{THIS_YEAR}年"},
     ])
 
