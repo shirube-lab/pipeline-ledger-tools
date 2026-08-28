@@ -66,6 +66,7 @@ python work2-ledger-checker/generate_sample_data.py
 python work2-ledger-checker/ledger_checker.py
 python work3-deterioration/prepare_data.py
 python work3-deterioration/score_priority.py
+python work3-deterioration/score_priority_v2.py   # 系統別ランク+幹線度(記事 9)
 python work3-deterioration/future_wave.py
 python work4-urgency/generate_survey_data.py   # work3 の出力が必要
 python work4-urgency/judge_urgency.py
