@@ -22,6 +22,7 @@ Python(geopandas)で自動化するツールとデモをまとめたリポジト
 7. [下水道管の主役はいつ塩ビに変わったのか — オープンデータで管種の世代交代を追い、「塩ビの健全率予測式がまだ立っていない」現在地を確かめる](https://qiita.com/shirube-lab/items/ec7d89391940e0f17058)
 8. [台帳 GIS・20 万レコードの「検収」自動化をめざす — 分析で見つけた不整合を次の検査項目に昇華する品質検査ツール(Python/geopandas)](https://qiita.com/shirube-lab/items/57700e60921ab079fabf)
 9. [優先度 A の 78% が雨水管だった — 劣化リスク評価を読者レビューで作り直す(系統別ランク+幹線度の導入、Python/geopandas)](https://qiita.com/shirube-lab/items/b7dbcc257cf7c1f2ec62)
+10. [openpyxl で検収レポート・判定表を作ってみた](https://qiita.com/shirube-lab/items/4ce71e3d0eff10ad73b7)
 
 ## データについての宣言
 
