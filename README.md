@@ -10,6 +10,7 @@ Python(geopandas)で自動化するツールとデモをまとめたリポジト
 | [work3-deterioration](work3-deterioration/) | 下水道管渠の劣化リスク評価・点検優先度スクリーニング(手法デモ) |
 | [work4-urgency](work4-urgency/) | TV カメラ調査結果からの緊急度判定(判定基準は JSON プロファイル・調査データは全合成) |
 | [work5-exchange-standard](work5-exchange-standard/) | 公開台帳データを国総研データ交換標準(素案)の GeoPackage へ変換し、ギャップを差分レポート化 |
+| [work6-pipe-mouth](work6-pipe-mouth/) | 管口部(マンホールから 5m 以内)に絞った点検が、スパン延長の分布に対してどこまで絞り込めるかの試算 |
 
 解説記事(Qiita):
 
@@ -71,4 +72,5 @@ python work3-deterioration/score_priority_v2.py   # 系統別ランク+幹線度
 python work3-deterioration/future_wave.py
 python work4-urgency/generate_survey_data.py   # work3 の出力が必要
 python work4-urgency/judge_urgency.py
+python work6-pipe-mouth/pipe_mouth_focus.py
 ```
