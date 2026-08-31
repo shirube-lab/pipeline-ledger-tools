@@ -77,7 +77,7 @@ def expected_defects(mouth_len: float, near_len: float, mid_len: float):
 def coverage_table(g: gpd.GeoDataFrame) -> pd.DataFrame:
     """Length share and expected defect share of the mouth zones, by band."""
     bands = [0, 10, 20, 30, 50, 72, np.inf]
-    labels = ["〜10m", "10〜20m", "20〜30m", "30〜50m", "50〜72m", "72m 超"]
+    labels = ["〜10m", "10〜20m", "20〜30m", "30〜50m", "50〜72m", "72m 以上"]
     rows = []
     total_by_sys = g.groupby("sewer_type", observed=True)["length_m"].sum()
     for st, sub in g.groupby("sewer_type", observed=True):
