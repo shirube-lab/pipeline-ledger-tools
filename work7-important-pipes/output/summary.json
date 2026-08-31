@@ -1,0 +1,153 @@
+{
+  "ledger": {
+    "pipes": 21223,
+    "length_km": 635.4,
+    "by_system": {
+      "汚水": {
+        "n": 18211,
+        "km": 515.4
+      },
+      "雨水": {
+        "n": 3012,
+        "km": 119.9
+      }
+    },
+    "pipe_attributes": [
+      "施工年度",
+      "管種名称",
+      "管径1(mm) 径/幅",
+      "上流土被り(m)",
+      "下流土被り(m)"
+    ]
+  },
+  "flow_direction": {
+    "testable": 18134,
+    "flipped": 245
+  },
+  "condition1_処理場から最終合流地点まで": {
+    "pipes": 18211,
+    "nodes": 17711,
+    "terminals": 301,
+    "terminals_raw_drawing_direction": 139,
+    "terminals_already_at_a_confluence": 161,
+    "run_length_m_max": 1108.3,
+    "run_length_m_median": 0.0,
+    "run_length_m_median_nonzero": 45.6,
+    "run_length_m_total": 11618.8,
+    "run_share_of_network": 0.0225,
+    "components": 83,
+    "largest_component_share": 0.682,
+    "top_components": [
+      {
+        "length_km": 351.52,
+        "pipes": 12513,
+        "dominant_district": "中央処理分区",
+        "dominant_share": 0.488
+      },
+      {
+        "length_km": 65.17,
+        "pipes": 1799,
+        "dominant_district": "南部処理分区",
+        "dominant_share": 0.999
+      },
+      {
+        "length_km": 31.4,
+        "pipes": 824,
+        "dominant_district": "瑞穂処理分区",
+        "dominant_share": 0.988
+      },
+      {
+        "length_km": 19.87,
+        "pipes": 1026,
+        "dominant_district": "阿原処理分区",
+        "dominant_share": 0.617
+      },
+      {
+        "length_km": 9.74,
+        "pipes": 326,
+        "dominant_district": "新居処理分区",
+        "dominant_share": 0.997
+      },
+      {
+        "length_km": 8.34,
+        "pipes": 556,
+        "dominant_district": "有脇処理分区",
+        "dominant_share": 0.998
+      }
+    ]
+  },
+  "condition2_流域下水道": {
+    "下水道区分名": {
+      "(空欄)": 10809,
+      "公共下水道": 9880
+    },
+    "filled_rate": 0.478
+  },
+  "condition3_管径2m相当以上": {
+    "n": 271,
+    "length_km": 16.53,
+    "by_system": {
+      "汚水": {
+        "n": 1,
+        "length_km": 0.04
+      },
+      "雨水": {
+        "n": 270,
+        "length_km": 16.49
+      }
+    },
+    "threshold_sweep": {
+      ">= 1500 mm": {
+        "n": 512,
+        "length_km": 30.31
+      },
+      ">= 1800 mm": {
+        "n": 321,
+        "length_km": 19.16
+      },
+      ">= 2000 mm": {
+        "n": 271,
+        "length_km": 16.53
+      },
+      ">= 2200 mm": {
+        "n": 167,
+        "length_km": 9.98
+      },
+      ">= 2500 mm": {
+        "n": 136,
+        "length_km": 6.5
+      }
+    },
+    "material_mix": {
+      "その他": 145,
+      "ヒューム管": 47,
+      "塩ビ管": 16,
+      "ヒューム管･推進管": 12,
+      "陶管": 8,
+      "シールド": 8,
+      "現場打": 1,
+      "強化プラスチック管": 1
+    },
+    "year_missing": 135,
+    "year_known": 136,
+    "installed_1994_or_earlier_of_known": 32,
+    "diameter_column_is_ambiguous": "管径１(mm) 径/幅 — 円形の径と矩形の幅を兼ねる 1 列。断面形状・内空高さの列は無い"
+  },
+  "condition4_緊急輸送道路等": {
+    "manholes": 20689,
+    "road_admin_filled_rate": 0.669,
+    "manholes_by_admin": {
+      "半田市": 13087,
+      "(空欄)": 6856,
+      "愛知県": 461,
+      "建設省": 285
+    },
+    "pipes_both_ends_non_city": 662,
+    "pipes_either_end_non_city": 974,
+    "pipes_with_an_unknown_end": 7453,
+    "length_km_both_ends": 26.83,
+    "length_km_either_end": 38.01,
+    "length_km_unknown": 209.33,
+    "share_of_all_pipes": 0.0312
+  }
+}

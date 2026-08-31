@@ -11,6 +11,7 @@ Python(geopandas)で自動化するツールとデモをまとめたリポジト
 | [work4-urgency](work4-urgency/) | TV カメラ調査結果からの緊急度判定(判定基準は JSON プロファイル・調査データは全合成) |
 | [work5-exchange-standard](work5-exchange-standard/) | 公開台帳データを国総研データ交換標準(素案)の GeoPackage へ変換し、ギャップを差分レポート化 |
 | [work6-pipe-mouth](work6-pipe-mouth/) | 管口部(マンホールから 5m 以内)に絞った点検が、スパン延長の分布に対してどこまで絞り込めるかの試算 |
+| [work7-important-pipes](work7-important-pipes/) | 中間整理の「重要管路」4 条件を台帳から機械判定し、判定できた条件と足りない情報を切り分けるツール |
 
 解説記事(Qiita):
 
@@ -73,4 +74,5 @@ python work3-deterioration/future_wave.py
 python work4-urgency/generate_survey_data.py   # work3 の出力が必要
 python work4-urgency/judge_urgency.py
 python work6-pipe-mouth/pipe_mouth_focus.py
+python work7-important-pipes/extract_important_pipes.py
 ```
