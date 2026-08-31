@@ -9,6 +9,9 @@ Datasets and terms:
   Terms: attribution required; distribution of processed works is
   permitted (contact NIED if the work itself is to be sold).
   https://www.j-shis.bosai.go.jp/labs/wm2020/
+- MLIT KSJ N02 railway sections, 2024 (CC BY 4.0 for the 2020 edition onwards;
+  see the dataset page's 使用許諾条件 row).
+  https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N02-2024.html
 - MLIT KSJ N03 administrative boundaries, Aichi 2024 (CC BY 4.0).
   Used as a coastline proxy via the dissolved outer boundary, because
   the KSJ coastline dataset (C23) is designated non-commercial.
@@ -26,6 +29,10 @@ SOURCES = {
     "Z-WM2020-JAPAN-M250.zip": (
         "https://www.j-shis.bosai.go.jp/labs/wm2020/data/Z-WM2020-JAPAN-M250.zip",
         "jshis",
+    ),
+    "N02-24_GML.zip": (
+        "https://nlftp.mlit.go.jp/ksj/gml/data/N02/N02-24/N02-24_GML.zip",
+        "n02",
     ),
     "N03-20240101_23_GML.zip": (
         "https://nlftp.mlit.go.jp/ksj/gml/data/N03/N03-2024/N03-20240101_23_GML.zip",

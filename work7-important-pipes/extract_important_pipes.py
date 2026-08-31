@@ -22,6 +22,7 @@ Outputs (output/):
   cond3_large_diameter.csv  条件(3)で拾える管きょ
   cond1_trunk_runs.csv      条件(1)を有向グラフで解いた結果(末端ごと)
   cond4_road_candidates.csv 条件(4)の候補(台帳の道路管理者名で絞ったもの)
+  cond4_rail_pipes.csv      条件(4)のうち軌道下(N02 鉄道データとの空間照合)
   pipe_sizes.csv            全管きょの口径・延長(記事の図の入力)
   summary.json              記事で使う数値
 """
@@ -329,6 +330,55 @@ def condition4(pipes, mh, ks, ke) -> tuple[pd.DataFrame, dict]:
     return cand[cols].sort_values("length_m", ascending=False), info
 
 
+def condition4_rail(pipes: gpd.GeoDataFrame) -> tuple[pd.DataFrame | None, dict]:
+    """(4) の「軌道下」だけは、商用利用できる公開データで実装できる。
+
+    N02(鉄道データ)は 2020 年度版以降 CC BY 4.0 で、軌道の中心線を線データで
+    持っている。中心線からの距離でバッファを取り、交差する管きょを拾う。
+
+    バッファ幅は軌道敷の幅の代用で、正確な鉄道用地界ではない。だから幅を振った
+    感度も一緒に出す。緊急輸送道路下・河川下が同じようにできない理由は README と
+    記事に書いたとおり(N10 は非商用、W05 も非商用、河川区域界は基盤地図情報でも
+    未整備)。
+    """
+    zip_path = BASE.parent / "env" / "N02-24_GML.zip"
+    if not zip_path.exists():
+        return None, {"skipped": "N02-24_GML.zip が無い(data/env/setup_env_data.py を実行)"}
+    rail = gpd.read_file(f"zip://{zip_path}!UTF-8/N02-24_RailroadSection.shp",
+                         encoding="utf-8")
+    extent = pipes.to_crs(rail.crs).union_all().convex_hull.buffer(0.006)  # ≈600m
+    near = rail[rail.intersects(extent)].to_crs(CRS)
+
+    # 「軌道下」の芯は横断です。中心線そのものと交差する管きょ = 軌道の下を通る管。
+    # バッファはあくまで軌道敷幅の代用で、広げるほど「軌道沿いを並走する管」を
+    # 巻き込むので、幅を振った感度として別に出します。
+    center = near.geometry.union_all()
+    crosses = pipes.geometry.intersects(center)
+    info = {
+        "rail_sections_in_extent": int(len(near)),
+        "lines_km_in_extent": {str(n): round(float(p.geometry.length.sum()) / 1000, 2)
+                               for n, p in near.groupby("N02_003")},
+        "crossing_centreline": {
+            "n": int(crosses.sum()),
+            "length_km": round(float(pipes.loc[crosses, "length_m"].sum()) / 1000, 2),
+            "by_line": {},
+        },
+        "buffer_sweep": {},
+    }
+    for name, part in near.groupby("N02_003"):
+        m = pipes.geometry.intersects(part.geometry.union_all())
+        info["crossing_centreline"]["by_line"][str(name)] = int(m.sum())
+    for width in (5.0, 10.0, 20.0):
+        m = pipes.geometry.intersects(near.geometry.buffer(width).union_all())
+        info["buffer_sweep"][f"buffer {width:g} m"] = {
+            "n": int(m.sum()),
+            "length_km": round(float(pipes.loc[m, "length_m"].sum()) / 1000, 2),
+        }
+    hit = pipes[crosses].copy()
+    cols = ["SAUID", "system", "dia_mm", "material", "length_m"]
+    return hit[cols].sort_values("length_m", ascending=False), info
+
+
 def main() -> None:
     # The console on a Japanese Windows is cp932; the report text is not.
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -340,13 +390,33 @@ def main() -> None:
     c1, i1 = condition1(pipes, mh, ks, ke, uphill)
     i2 = condition2(mh)
     c4, i4 = condition4(pipes, mh, ks, ke)
+    c4r, i4r = condition4_rail(pipes)
 
     c3.to_csv(OUT / "cond3_large_diameter.csv", index=False, encoding="utf-8-sig")
     c1.to_csv(OUT / "cond1_trunk_runs.csv", index=False, encoding="utf-8-sig")
     c4.to_csv(OUT / "cond4_road_candidates.csv", index=False, encoding="utf-8-sig")
+    if c4r is not None:
+        c4r.to_csv(OUT / "cond4_rail_pipes.csv", index=False, encoding="utf-8-sig")
     # full size distribution, so the article figures read tool output only
     pipes[["SAUID", "system", "dia_mm", "year", "length_m"]].to_csv(
         OUT / "pipe_sizes.csv", index=False, encoding="utf-8-sig")
+
+    # 条件どうしは重なります。「機械で決められた集合」と「候補どまりの集合」は
+    # 分けて数えないと、候補を足し込んだ数字が独り歩きします。
+    def km(ids: set) -> float:
+        return round(float(pipes.loc[pipes["SAUID"].isin(ids), "length_m"].sum()) / 1000, 2)
+
+    s3 = set(c3["SAUID"])
+    s4rail = set(c4r["SAUID"]) if c4r is not None else set()
+    s4road = set(c4["SAUID"])
+    decided = s3 | s4rail
+    overlap = {
+        "decided(条件3 ∪ 条件4軌道下)": {"n": len(decided), "length_km": km(decided)},
+        "candidates_only(条件4 道路管理者)": {"n": len(s4road - decided),
+                                            "length_km": km(s4road - decided)},
+        "条件3 ∩ 条件4軌道下": len(s3 & s4rail),
+        "decided_share_of_network": round(km(decided) / (pipes["length_m"].sum() / 1000), 4),
+    }
 
     summary = {
         "ledger": {
@@ -363,6 +433,8 @@ def main() -> None:
         "condition2_流域下水道": i2,
         "condition3_管径2m相当以上": i3,
         "condition4_緊急輸送道路等": i4,
+        "condition4_軌道下": i4r,
+        "overlap": overlap,
     }
     (OUT / "summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")

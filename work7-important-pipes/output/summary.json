@@ -149,5 +149,46 @@
     "length_km_either_end": 38.01,
     "length_km_unknown": 209.33,
     "share_of_all_pipes": 0.0312
+  },
+  "condition4_軌道下": {
+    "rail_sections_in_extent": 22,
+    "lines_km_in_extent": {
+      "武豊線": 12.5,
+      "河和線": 8.26
+    },
+    "crossing_centreline": {
+      "n": 51,
+      "length_km": 6.75,
+      "by_line": {
+        "武豊線": 33,
+        "河和線": 19
+      }
+    },
+    "buffer_sweep": {
+      "buffer 5 m": {
+        "n": 142,
+        "length_km": 9.9
+      },
+      "buffer 10 m": {
+        "n": 302,
+        "length_km": 15.47
+      },
+      "buffer 20 m": {
+        "n": 674,
+        "length_km": 27.47
+      }
+    }
+  },
+  "overlap": {
+    "decided(条件3 ∪ 条件4軌道下)": {
+      "n": 313,
+      "length_km": 20.48
+    },
+    "candidates_only(条件4 道路管理者)": {
+      "n": 647,
+      "length_km": 25.42
+    },
+    "条件3 ∩ 条件4軌道下": 9,
+    "decided_share_of_network": 0.0322
   }
 }
