@@ -37,6 +37,9 @@
     "run_share_of_network": 0.0225,
     "components": 83,
     "largest_component_share": 0.682,
+    "top6_share_of_length": 0.943,
+    "rest_components": 77,
+    "rest_components_km": 29.37,
     "top_components": [
       {
         "length_km": 351.52,

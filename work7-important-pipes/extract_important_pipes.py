@@ -271,6 +271,10 @@ def condition1(pipes, mh, ks, ke, uphill) -> tuple[pd.DataFrame, dict]:
                                       / float(length[idx].sum()), 4),
         "components": len(comps),
         "largest_component_share": round(comps[0]["length_m"] / total_m, 3),
+        # 成分「数」より、延長がどこに集まっているかのほうが実態を表す
+        "top6_share_of_length": round(sum(c["length_m"] for c in comps[:6]) / total_m, 3),
+        "rest_components": len(comps) - 6,
+        "rest_components_km": round(sum(c["length_m"] for c in comps[6:]) / 1000, 2),
         "top_components": top,
     }
     return df, info
