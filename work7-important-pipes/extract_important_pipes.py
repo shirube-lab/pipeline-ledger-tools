@@ -108,8 +108,14 @@ def flow_direction(pipes: gpd.GeoDataFrame, mh: gpd.GeoDataFrame):
     gl_e = np.where(on, gl[np.clip(e_i, 0, None)], np.nan)
     testable = (on & np.isfinite(gl_s) & np.isfinite(gl_e) & np.isfinite(cov_up)
                 & np.isfinite(cov_dn) & np.isfinite(dia) & (dia > 0))
-    uphill = testable & ((gl_e - cov_dn - dia) > (gl_s - cov_up - dia))
-    stats = {"testable": int(testable.sum()), "flipped": int(uphill.sum())}
+    inv_s, inv_e = gl_s - cov_up - dia, gl_e - cov_dn - dia
+    uphill = testable & (inv_e > inv_s)
+    stats = {
+        "testable": int(testable.sum()),
+        "agrees_with_drawing_direction": int((testable & (inv_e < inv_s)).sum()),
+        "flipped": int(uphill.sum()),
+        "equal_invert": int((testable & (inv_e == inv_s)).sum()),
+    }
     return ks, ke, uphill, stats
 
 
@@ -161,6 +167,7 @@ def condition3(pipes: gpd.GeoDataFrame) -> tuple[pd.DataFrame, dict]:
         sub = pipes[pipes["dia_mm"] >= t]
         sweep[f">= {t} mm"] = {"n": int(len(sub)),
                                "length_km": round(float(sub["length_m"].sum()) / 1000, 2)}
+    blank = pipes["dia_mm"].isna()
     info = {
         "n": int(len(big)),
         "length_km": round(float(big["length_m"].sum()) / 1000, 2),
@@ -168,6 +175,13 @@ def condition3(pipes: gpd.GeoDataFrame) -> tuple[pd.DataFrame, dict]:
                                "length_km": round(float(v["length_m"].sum()) / 1000, 2)}
                       for k, v in big.groupby("system")},
         "threshold_sweep": sweep,
+        # 口径が空欄なら、この条件はそもそも判定できない
+        "undecidable_blank_diameter": {
+            "n": int(blank.sum()),
+            "length_km": round(float(pipes.loc[blank, "length_m"].sum()) / 1000, 2),
+            "share_of_length": round(float(pipes.loc[blank, "length_m"].sum())
+                                     / float(pipes["length_m"].sum()), 4),
+        },
         "material_mix": {str(k): int(v) for k, v in big["material"].value_counts().items()},
         # 全国特別重点調査(令和7年3月要請)の対象は「内径2m以上かつ 1994 年度以前に
         # 設置・改築」。重要管路の定義とは別基準なので、参考として分けて数える。
@@ -257,9 +271,24 @@ def condition1(pipes, mh, ks, ke, uphill) -> tuple[pd.DataFrame, dict]:
             "dominant_share": round(share, 3),
         })
 
+    # 連結の欠落がスナップ精度の問題でないことを、公開スクリプトの側で示す
+    snap_sweep = {}
+    for tol in (0.01, 0.1, 0.5, 1.0, 2.0):
+        def key(c, t=tol):
+            return (round(c[0] / t), round(c[1] / t))
+        ks_t = [key(g.coords[0]) for g in pipes.geometry.iloc[idx]]
+        ke_t = [key(g.coords[-1]) for g in pipes.geometry.iloc[idx]]
+        local = np.arange(len(idx))
+        cs = components(local, ks_t, ke_t, length[idx])
+        snap_sweep[f"{tol:g} m"] = {
+            "components": len(cs),
+            "largest_share": round(cs[0]["length_m"] / sum(c["length_m"] for c in cs), 3),
+        }
+
     info = {
         "pipes": int(len(idx)),
         "nodes": int(len(nodes)),
+        "snap_tolerance_sweep": snap_sweep,
         "terminals": int(len(sinks)),
         "terminals_raw_drawing_direction": int(terminals_raw),
         "terminals_already_at_a_confluence": int((df["sink_indegree"] >= 2).sum()),
@@ -358,10 +387,15 @@ def condition4_rail(pipes: gpd.GeoDataFrame) -> tuple[pd.DataFrame | None, dict]
     # 巻き込むので、幅を振った感度として別に出します。
     center = near.geometry.union_all()
     crosses = pipes.geometry.intersects(center)
+    # extent は「管路を N02 と同じ地理座標系に移し、凸包を約 600m 広げた領域」。
+    # 触れた区間の全長と、extent でクリップした延長は別物なので両方出す。
+    clipped = near.clip(gpd.GeoSeries([extent], crs=rail.crs).to_crs(CRS).iloc[0])
     info = {
         "rail_sections_in_extent": int(len(near)),
-        "lines_km_in_extent": {str(n): round(float(p.geometry.length.sum()) / 1000, 2)
-                               for n, p in near.groupby("N02_003")},
+        "lines_km_touching_extent": {str(n): round(float(p.geometry.length.sum()) / 1000, 2)
+                                     for n, p in near.groupby("N02_003")},
+        "lines_km_clipped_to_extent": {str(n): round(float(p.geometry.length.sum()) / 1000, 2)
+                                       for n, p in clipped.groupby("N02_003")},
         "crossing_centreline": {
             "n": int(crosses.sum()),
             "length_km": round(float(pipes.loc[crosses, "length_m"].sum()) / 1000, 2),

@@ -22,11 +22,35 @@
   },
   "flow_direction": {
     "testable": 18134,
-    "flipped": 245
+    "agrees_with_drawing_direction": 17868,
+    "flipped": 245,
+    "equal_invert": 21
   },
   "condition1_処理場から最終合流地点まで": {
     "pipes": 18211,
     "nodes": 17711,
+    "snap_tolerance_sweep": {
+      "0.01 m": {
+        "components": 83,
+        "largest_share": 0.682
+      },
+      "0.1 m": {
+        "components": 75,
+        "largest_share": 0.682
+      },
+      "0.5 m": {
+        "components": 49,
+        "largest_share": 0.686
+      },
+      "1 m": {
+        "components": 49,
+        "largest_share": 0.686
+      },
+      "2 m": {
+        "components": 45,
+        "largest_share": 0.688
+      }
+    },
     "terminals": 301,
     "terminals_raw_drawing_direction": 139,
     "terminals_already_at_a_confluence": 161,
@@ -121,6 +145,11 @@
         "length_km": 6.5
       }
     },
+    "undecidable_blank_diameter": {
+      "n": 201,
+      "length_km": 5.73,
+      "share_of_length": 0.009
+    },
     "material_mix": {
       "その他": 145,
       "ヒューム管": 47,
@@ -155,9 +184,13 @@
   },
   "condition4_軌道下": {
     "rail_sections_in_extent": 22,
-    "lines_km_in_extent": {
+    "lines_km_touching_extent": {
       "武豊線": 12.5,
       "河和線": 8.26
+    },
+    "lines_km_clipped_to_extent": {
+      "武豊線": 10.58,
+      "河和線": 7.21
     },
     "crossing_centreline": {
       "n": 51,
