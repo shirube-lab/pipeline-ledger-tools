@@ -15,7 +15,7 @@
     "pipe_attributes": [
       "施工年度",
       "管種名称",
-      "管径1(mm) 径/幅",
+      "管径１(mm) 径/幅",
       "上流土被り(m)",
       "下流土被り(m)"
     ]
@@ -24,7 +24,13 @@
     "testable": 18134,
     "agrees_with_drawing_direction": 17868,
     "flipped": 245,
-    "equal_invert": 21
+    "equal_invert": 21,
+    "汚水のみ": {
+      "testable": 16186,
+      "agrees_with_drawing_direction": 15968,
+      "flipped": 199,
+      "equal_invert": 19
+    }
   },
   "condition1_処理場から最終合流地点まで": {
     "pipes": 18211,

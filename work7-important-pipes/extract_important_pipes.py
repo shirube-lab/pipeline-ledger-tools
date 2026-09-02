@@ -435,6 +435,10 @@ def main() -> None:
     OUT.mkdir(exist_ok=True)
     pipes, mh = load()
     ks, ke, uphill, dir_stats = flow_direction(pipes, mh)
+    # 条件(1) は汚水管きょだけで解くので、その部分集合での内訳も別に残す
+    # (全体の内訳をそのまま汚水の話に使うと、分母がずれる)
+    _, _, _, dir_stats["汚水のみ"] = flow_direction(
+        pipes[pipes["system"] == "汚水"], mh)
 
     c3, i3 = condition3(pipes)
     c1, i1 = condition1(pipes, mh, ks, ke, uphill)
@@ -475,7 +479,7 @@ def main() -> None:
             "by_system": {str(k): {"n": int(len(v)),
                                    "km": round(float(v["length_m"].sum()) / 1000, 1)}
                           for k, v in pipes.groupby("system")},
-            "pipe_attributes": ["施工年度", "管種名称", "管径1(mm) 径/幅",
+            "pipe_attributes": ["施工年度", "管種名称", "管径１(mm) 径/幅",
                                 "上流土被り(m)", "下流土被り(m)"],
         },
         "flow_direction": dir_stats,
