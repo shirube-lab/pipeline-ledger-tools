@@ -285,10 +285,22 @@ def condition1(pipes, mh, ks, ke, uphill) -> tuple[pd.DataFrame, dict]:
             "largest_share": round(cs[0]["length_m"] / sum(c["length_m"] for c in cs), 3),
         }
 
+    # 分区と成分は 1 対 1 ではない。どの分区がいくつの成分に割れているかも出す
+    per_district: dict = defaultdict(list)
+    for c in comps:
+        names = pd.Series([district.get(n, "") for n in c["nodes"]])
+        names = names[names != ""]
+        if len(names):
+            per_district[names.value_counts().index[0]].append(c["length_m"] / 1000)
+    split = {d: {"components": len(v), "total_km": round(sum(v), 2),
+                 "largest_km": [round(x, 2) for x in sorted(v, reverse=True)[:4]]}
+             for d, v in sorted(per_district.items(), key=lambda x: -sum(x[1]))}
+
     info = {
         "pipes": int(len(idx)),
         "nodes": int(len(nodes)),
         "snap_tolerance_sweep": snap_sweep,
+        "components_per_district": split,
         "terminals": int(len(sinks)),
         "terminals_raw_drawing_direction": int(terminals_raw),
         "terminals_already_at_a_confluence": int((df["sink_indegree"] >= 2).sum()),

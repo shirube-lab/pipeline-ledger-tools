@@ -51,6 +51,110 @@
         "largest_share": 0.688
       }
     },
+    "components_per_district": {
+      "中央処理分区": {
+        "components": 25,
+        "total_km": 354.66,
+        "largest_km": [
+          351.52,
+          0.38,
+          0.35,
+          0.27
+        ]
+      },
+      "南部処理分区": {
+        "components": 5,
+        "total_km": 65.38,
+        "largest_km": [
+          65.17,
+          0.15,
+          0.02,
+          0.02
+        ]
+      },
+      "瑞穂処理分区": {
+        "components": 4,
+        "total_km": 32.36,
+        "largest_km": [
+          31.4,
+          0.77,
+          0.18,
+          0.01
+        ]
+      },
+      "阿原処理分区": {
+        "components": 3,
+        "total_km": 20.66,
+        "largest_km": [
+          19.87,
+          0.53,
+          0.25
+        ]
+      },
+      "北浦処理分区": {
+        "components": 4,
+        "total_km": 12.8,
+        "largest_km": [
+          7.44,
+          4.37,
+          0.57,
+          0.43
+        ]
+      },
+      "新居処理分区": {
+        "components": 2,
+        "total_km": 10.01,
+        "largest_km": [
+          9.74,
+          0.27
+        ]
+      },
+      "有脇処理分区": {
+        "components": 2,
+        "total_km": 8.36,
+        "largest_km": [
+          8.34,
+          0.02
+        ]
+      },
+      "住吉処理分区": {
+        "components": 10,
+        "total_km": 3.4,
+        "largest_km": [
+          2.03,
+          0.36,
+          0.32,
+          0.26
+        ]
+      },
+      "乙川処理分区": {
+        "components": 7,
+        "total_km": 2.3,
+        "largest_km": [
+          1.47,
+          0.44,
+          0.16,
+          0.13
+        ]
+      },
+      "亀崎処理分区": {
+        "components": 1,
+        "total_km": 2.22,
+        "largest_km": [
+          2.22
+        ]
+      },
+      "乙川東部処理分区": {
+        "components": 7,
+        "total_km": 1.11,
+        "largest_km": [
+          0.45,
+          0.24,
+          0.11,
+          0.09
+        ]
+      }
+    },
     "terminals": 301,
     "terminals_raw_drawing_direction": 139,
     "terminals_already_at_a_confluence": 161,
